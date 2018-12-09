@@ -30,12 +30,21 @@ public class Spider {
 
 
     /**
+     *
      * 登录
      *
      * @param userName 用户名
      * @param pwd      密码
      */
-    public void login(String userName, String pwd) throws IOException {
+    /**
+     * 登录
+     *
+     * @param userName 用户名
+     * @param pwd      密码
+     * @return 1成功，-1失败
+     * @throws IOException
+     */
+    public int login(String userName, String pwd) throws IOException {
         // 获取Response
         Connection.Response r = Jsoup.connect(Const.LOGIN + "?service=" + Const.SERVICE_HALL).execute();
 
@@ -60,8 +69,8 @@ public class Spider {
         userData.put("_eventId", eventId);
         userData.put("rmShown", rmShown);
 
-        userData.put("username",userName);
-        userData.put("password",pwd);
+        userData.put("username", userName);
+        userData.put("password", pwd);
 
         // 登录
         Connection.Response loginResponse = Jsoup.connect(Const.LOGIN)
@@ -73,6 +82,11 @@ public class Spider {
                 .execute();
 
         System.out.println(loginResponse.url());
+        if (loginResponse.url().equals("https://authserver.zut.edu.cn/authserver/login")) {
+            return -1;
+        } else {
+            return 1;
+        }
 
     }
 
