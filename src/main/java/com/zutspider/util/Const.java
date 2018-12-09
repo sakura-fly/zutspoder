@@ -11,6 +11,8 @@ public class Const {
     public final static String LOGIN = "https://authserver.zut.edu.cn/authserver/login";
     // 办事大厅
     public final static String SERVICE_HALL = "http://i.zut.edu.cn/";
+    // 办事大厅
+    public final static String QUERY_SCORE = "http://app.zut.edu.cn/publicapp/sys/cjcxapp/modules/scoreQuery/scoreQueryAction.do";
     // public static String
 
 

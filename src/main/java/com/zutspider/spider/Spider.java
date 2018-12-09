@@ -1,6 +1,7 @@
 package com.zutspider.spider;
 
 
+import com.zutspider.model.ZSResponse;
 import com.zutspider.util.Const;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -9,6 +10,7 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 爬虫类，单例
@@ -30,13 +32,6 @@ public class Spider {
 
 
     /**
-     *
-     * 登录
-     *
-     * @param userName 用户名
-     * @param pwd      密码
-     */
-    /**
      * 登录
      *
      * @param userName 用户名
@@ -44,7 +39,7 @@ public class Spider {
      * @return 1成功，-1失败
      * @throws IOException
      */
-    public int login(String userName, String pwd) throws IOException {
+    public ZSResponse login(String userName, String pwd) throws IOException {
         // 获取Response
         Connection.Response r = Jsoup.connect(Const.LOGIN + "?service=" + Const.SERVICE_HALL).execute();
 
@@ -73,21 +68,55 @@ public class Spider {
         userData.put("password", pwd);
 
         // 登录
-        Connection.Response loginResponse = Jsoup.connect(Const.LOGIN)
-                .cookies(cookies)  // 设置cookies
-                .headers(Const.dHeaders)  // 设置消息头
-                .data(userData)  // 登录信息
-                .ignoreContentType(true)
-                .method(Connection.Method.POST)
-                .execute();
+        Connection.Response loginResponse = post(userData,Const.LOGIN);
 
-        System.out.println(loginResponse.url());
-        if (loginResponse.url().equals("https://authserver.zut.edu.cn/authserver/login")) {
+        // 更换cookies
+        cookies = loginResponse.cookies();
+
+        // 如果跳转到登录页面，登录失败
+        return new ZSResponse(isLoginIndex(loginResponse),loginResponse.body());
+
+
+    }
+
+    /**
+     * 是否登录
+     *
+     * @return 1登录，-1未登录
+     */
+    private int isLoginIndex(Connection.Response loginResponse){
+        if (loginResponse.url().toString().startsWith("https://authserver.zut.edu.cn/authserver/login")) {
             return -1;
         } else {
             return 1;
         }
+    }
 
+    private Connection.Response post(Map<String,String> data,String url) throws IOException {
+        System.out.println("----------------------");
+        Set<String> keys = cookies.keySet();
+        for (String k : keys){
+            System.out.println(k + "===" + cookies.get(k));
+        }
+        System.out.println("----------------------");
+        return Jsoup.connect(url)
+                .cookies(cookies)  // 设置cookies
+                .headers(Const.dHeaders)  // 设置消息头
+                .data(data)  // post信息
+                .ignoreContentType(true)
+                .method(Connection.Method.POST)
+                .execute();
+    }
+
+    public ZSResponse queryScore() throws IOException {
+        Map<String, String> data = new HashMap<String, String>();
+        data.put("pageNumber","1");
+        data.put("pageSize","10");
+        data.put("querySetting","[{\"name\":\"XNXQDM\",\"caption\":\"学年学期\",\"linkOpt\":\"AND\",\"builderList\":\"cbl_String\",\"builder\":\"equal\",\"value\":\"2017-2018-2\",\"value_display\":\"2017-2018 第二学期\"}]");
+
+        Connection.Response resp = post(data, Const.QUERY_SCORE);
+
+        return new ZSResponse(isLoginIndex(resp),resp.body());
     }
 
 
