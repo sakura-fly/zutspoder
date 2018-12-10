@@ -72,7 +72,6 @@ public class Spider {
         Connection.Response loginResponse = post(userData, Const.LOGIN);
 
 
-
         System.out.println("登录结束");
 
         return isLoginIndex(loginResponse);
@@ -83,7 +82,7 @@ public class Spider {
     /**
      * 是否登录
      *
-     * @return 1登录，-1未登录
+     * @return 1登录，设置内容；-1未登录，不设置内容
      */
     private ZSResponse isLoginIndex(Connection.Response response) {
         ZSResponse r = new ZSResponse();
@@ -97,6 +96,15 @@ public class Spider {
         return r;
     }
 
+
+    /**
+     * post请求
+     *
+     * @param data 请求参数
+     * @param url  请求地址
+     * @return
+     * @throws IOException
+     */
     private Connection.Response post(Map<String, String> data, String url) throws IOException {
         // System.out.println("---------before-------------");
         // Set<String> keys = cookies.keySet();
@@ -106,7 +114,6 @@ public class Spider {
         // System.out.println("---------before-------------");
 
 
-
         Connection.Response resp = Jsoup.connect(url)
                 .method(Connection.Method.POST)
                 .cookies(cookies)  // 设置cookies
@@ -114,7 +121,6 @@ public class Spider {
                 .data(data)  // post信息
                 .ignoreContentType(true)
                 .execute();
-
 
 
         // System.out.println("++++++++++++++++++++++");
@@ -137,33 +143,22 @@ public class Spider {
         return resp;
     }
 
+    /**
+     * 查询成绩
+     *
+     * @param data 查询信息
+     * @return
+     * @throws IOException
+     */
     public ZSResponse queryScore(Map<String, String> data) throws IOException {
         System.out.println("查询成绩");
-        // Map<String, String> data = new HashMap<String, String>();
-        // data.put("pageNumber", "1");
-        // data.put("pageSize", "10");
-        // data.put("querySetting",
-        //         // " [\n" +
-        //         // "    [\n" +
-        //         // "        {\n" +
-        //         // "            \"name\": \"KCM\",\n" +
-        //         // "            \"value\": \"模式\",\n" +
-        //         // "        }\n" +
-        //         // "    ],\n" +
-        //         "    {\n" +
-        //         "        \"name\": \"XNXQDM\",\n" +
-        //         "        \"linkOpt\": \"AND\"," +
-        //         "        \"value\": \"2017-2018-2\",\n" +
-        //         "    }\n" +
-        //         "]");
-        // data.put("querySetting", "[{\"name\":\"XNXQDM\",\"linkOpt\":\"AND\",\"builderList\":\"cbl_String\",\"builder\":\"equal\",\"value\":\"2017-2018-2\"}]");
 
         Connection.Response resp = post(data, Const.QUERY_SCORE);
         ZSResponse logResp;
-        if ((logResp = isLoginIndex(resp)).getCode() == -1){
+        if ((logResp = isLoginIndex(resp)).getCode() == -1) {
             return logResp;
         }
-        if (resp.method() == Connection.Method.GET){
+        if (resp.method() == Connection.Method.GET) {
             resp = post(data, Const.QUERY_SCORE);
         }
 

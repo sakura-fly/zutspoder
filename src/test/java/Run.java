@@ -45,10 +45,10 @@ public class Run {
 
 
         GradeQueryUtil qu = new GradeQueryUtil();
-        qu.setKcm("数")
-                .addPage2Map(new Page("1","10"))
-                .setXn("2017-2018-1")
-                .buildQuery();
+        qu.setKcm("数")  //  查询课程名
+                .addPage2Map(new Page("1", "10")) //  设置分页信息
+                .setXn("2017-2018-1")  // 设置学年
+                .buildQuery();  //  组合查询条件
 
         ZSResponse r = spider.queryScore(qu.getQuery());
         System.out.println(r.getText());
