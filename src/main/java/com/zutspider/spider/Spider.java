@@ -43,8 +43,8 @@ public class Spider {
         // 获取Response
         Connection.Response r = Jsoup.connect(Const.LOGIN + "?service=" + Const.SERVICE_HALL).execute();
 
-        // 替换cookies
-        cookies = r.cookies();
+        // 合并cookies
+        cookies.putAll(r.cookies());
 
         // 获取登录页面文档
         Document doc = Jsoup.parse(r.body());
@@ -68,13 +68,13 @@ public class Spider {
         userData.put("password", pwd);
 
         // 登录
-        Connection.Response loginResponse = post(userData,Const.LOGIN);
+        Connection.Response loginResponse = post(userData, Const.LOGIN);
 
-        // 更换cookies
-        cookies = loginResponse.cookies();
+        // 合并cookies
+        cookies.putAll(r.cookies());
 
-        // 如果跳转到登录页面，登录失败
-        return new ZSResponse(isLoginIndex(loginResponse),loginResponse.body());
+
+        return isLoginIndex(loginResponse);
 
 
     }
@@ -84,18 +84,22 @@ public class Spider {
      *
      * @return 1登录，-1未登录
      */
-    private int isLoginIndex(Connection.Response loginResponse){
-        if (loginResponse.url().toString().startsWith("https://authserver.zut.edu.cn/authserver/login")) {
-            return -1;
+    private ZSResponse isLoginIndex(Connection.Response response) {
+        ZSResponse r = new ZSResponse();
+        // 跳转到登录页说明没有登录
+        if (response.url().toString().startsWith("https://authserver.zut.edu.cn/authserver/login")) {
+            r.setCode(-1);
         } else {
-            return 1;
+            r.setCode(1);
+            r.setText(response.body());
         }
+        return r;
     }
 
-    private Connection.Response post(Map<String,String> data,String url) throws IOException {
+    private Connection.Response post(Map<String, String> data, String url) throws IOException {
         System.out.println("----------------------");
         Set<String> keys = cookies.keySet();
-        for (String k : keys){
+        for (String k : keys) {
             System.out.println(k + "===" + cookies.get(k));
         }
         System.out.println("----------------------");
@@ -110,13 +114,13 @@ public class Spider {
 
     public ZSResponse queryScore() throws IOException {
         Map<String, String> data = new HashMap<String, String>();
-        data.put("pageNumber","1");
-        data.put("pageSize","10");
-        data.put("querySetting","[{\"name\":\"XNXQDM\",\"caption\":\"学年学期\",\"linkOpt\":\"AND\",\"builderList\":\"cbl_String\",\"builder\":\"equal\",\"value\":\"2017-2018-2\",\"value_display\":\"2017-2018 第二学期\"}]");
+        data.put("pageNumber", "1");
+        data.put("pageSize", "10");
+        data.put("querySetting", "[{\"name\":\"XNXQDM\",\"caption\":\"学年学期\",\"linkOpt\":\"AND\",\"builderList\":\"cbl_String\",\"builder\":\"equal\",\"value\":\"2017-2018-2\",\"value_display\":\"2017-2018 第二学期\"}]");
 
         Connection.Response resp = post(data, Const.QUERY_SCORE);
 
-        return new ZSResponse(isLoginIndex(resp),resp.body());
+        return isLoginIndex(resp);
     }
 
 
