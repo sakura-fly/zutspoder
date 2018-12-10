@@ -70,8 +70,7 @@ public class Spider {
         // 登录
         Connection.Response loginResponse = post(userData, Const.LOGIN);
 
-        // 合并cookies
-        cookies.putAll(r.cookies());
+
 
 
         return isLoginIndex(loginResponse);
@@ -87,7 +86,7 @@ public class Spider {
     private ZSResponse isLoginIndex(Connection.Response response) {
         ZSResponse r = new ZSResponse();
         // 跳转到登录页说明没有登录
-        if (response.url().toString().startsWith("https://authserver.zut.edu.cn/authserver/login")) {
+        if (response.url().toString().startsWith(Const.LOGIN)) {
             r.setCode(-1);
         } else {
             r.setCode(1);
@@ -103,13 +102,17 @@ public class Spider {
             System.out.println(k + "===" + cookies.get(k));
         }
         System.out.println("----------------------");
-        return Jsoup.connect(url)
+        Connection.Response resp = Jsoup.connect(url)
                 .cookies(cookies)  // 设置cookies
                 .headers(Const.dHeaders)  // 设置消息头
                 .data(data)  // post信息
                 .ignoreContentType(true)
                 .method(Connection.Method.POST)
                 .execute();
+
+        // 合并cookies
+        cookies.putAll(resp.cookies());
+        return resp;
     }
 
     public ZSResponse queryScore() throws IOException {
