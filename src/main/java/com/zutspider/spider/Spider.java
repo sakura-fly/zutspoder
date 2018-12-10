@@ -40,6 +40,7 @@ public class Spider {
      * @throws IOException
      */
     public ZSResponse login(String userName, String pwd) throws IOException {
+        System.out.println("登录中");
         // 获取Response
         Connection.Response r = Jsoup.connect(Const.LOGIN + "?service=" + Const.SERVICE_HALL).execute();
 
@@ -72,6 +73,7 @@ public class Spider {
 
 
 
+        System.out.println("登录结束");
 
         return isLoginIndex(loginResponse);
 
@@ -96,33 +98,76 @@ public class Spider {
     }
 
     private Connection.Response post(Map<String, String> data, String url) throws IOException {
-        System.out.println("----------------------");
-        Set<String> keys = cookies.keySet();
-        for (String k : keys) {
-            System.out.println(k + "===" + cookies.get(k));
-        }
-        System.out.println("----------------------");
+        // System.out.println("---------before-------------");
+        // Set<String> keys = cookies.keySet();
+        // for (String k : keys) {
+        //     System.out.println(k + "===" + cookies.get(k));
+        // }
+        // System.out.println("---------before-------------");
+
+
+
         Connection.Response resp = Jsoup.connect(url)
+                .method(Connection.Method.POST)
                 .cookies(cookies)  // 设置cookies
                 .headers(Const.dHeaders)  // 设置消息头
                 .data(data)  // post信息
                 .ignoreContentType(true)
-                .method(Connection.Method.POST)
                 .execute();
+
+
+
+        // System.out.println("++++++++++++++++++++++");
+        // System.out.println(resp.method());
+        // System.out.println(resp.statusMessage());
+        // System.out.println(resp.url());
+        // System.out.println("++++++++++++++++++++++");
+
 
         // 合并cookies
         cookies.putAll(resp.cookies());
+
+
+        // System.out.println("----------after------------");
+        // Set<String> keys2 = cookies.keySet();
+        // for (String k : keys2) {
+        //     System.out.println(k + "===" + cookies.get(k));
+        // }
+        // System.out.println("----------after------------");
         return resp;
     }
 
-    public ZSResponse queryScore() throws IOException {
-        Map<String, String> data = new HashMap<String, String>();
-        data.put("pageNumber", "1");
-        data.put("pageSize", "10");
-        data.put("querySetting", "[{\"name\":\"XNXQDM\",\"caption\":\"学年学期\",\"linkOpt\":\"AND\",\"builderList\":\"cbl_String\",\"builder\":\"equal\",\"value\":\"2017-2018-2\",\"value_display\":\"2017-2018 第二学期\"}]");
+    public ZSResponse queryScore(Map<String, String> data) throws IOException {
+        System.out.println("查询成绩");
+        // Map<String, String> data = new HashMap<String, String>();
+        // data.put("pageNumber", "1");
+        // data.put("pageSize", "10");
+        // data.put("querySetting",
+        //         // " [\n" +
+        //         // "    [\n" +
+        //         // "        {\n" +
+        //         // "            \"name\": \"KCM\",\n" +
+        //         // "            \"value\": \"模式\",\n" +
+        //         // "        }\n" +
+        //         // "    ],\n" +
+        //         "    {\n" +
+        //         "        \"name\": \"XNXQDM\",\n" +
+        //         "        \"linkOpt\": \"AND\"," +
+        //         "        \"value\": \"2017-2018-2\",\n" +
+        //         "    }\n" +
+        //         "]");
+        // data.put("querySetting", "[{\"name\":\"XNXQDM\",\"linkOpt\":\"AND\",\"builderList\":\"cbl_String\",\"builder\":\"equal\",\"value\":\"2017-2018-2\"}]");
 
         Connection.Response resp = post(data, Const.QUERY_SCORE);
+        ZSResponse logResp;
+        if ((logResp = isLoginIndex(resp)).getCode() == -1){
+            return logResp;
+        }
+        if (resp.method() == Connection.Method.GET){
+            resp = post(data, Const.QUERY_SCORE);
+        }
 
+        System.out.println("查询成绩结束");
         return isLoginIndex(resp);
     }
 

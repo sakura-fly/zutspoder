@@ -1,12 +1,18 @@
+import com.zutspider.model.GradeQuery;
 import com.zutspider.model.ZSResponse;
 import com.zutspider.spider.Spider;
 import com.zutspider.util.Const;
+import org.json.JSONArray;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Run {
 
@@ -23,8 +29,27 @@ public class Run {
         Spider spider = Spider.getInstance();
         spider.login("201560140336", "wzl167777");
 
-        ZSResponse r = spider.queryScore();
-        System.out.println(r);
+        final GradeQuery kcm =new GradeQuery("CJ","83", "include","OR");
+        final GradeQuery xnxqdm =new GradeQuery("XNXQDM", "2017-2018-2", "equal","AND");
+        final List<GradeQuery> l = new ArrayList<GradeQuery>(){
+            {
+                add(kcm);
+            }
+        };
+        List l2 = new ArrayList(){
+            {
+                add(l);
+                add(xnxqdm);
+            }
+        };
+        JSONArray jsonArray = new JSONArray(l2);
+        System.out.println(jsonArray);
+        Map<String, String> data = new HashMap<String, String>();
+        data.put("pageNumber", "1");
+        data.put("pageSize", "10");
+        data.put("querySetting",jsonArray.toString());
+        ZSResponse r = spider.queryScore(data);
+        System.out.println(r.getText());
     }
 
     @Test
