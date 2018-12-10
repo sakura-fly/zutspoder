@@ -10,7 +10,6 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 爬虫类，单例
@@ -64,12 +63,12 @@ public class Spider {
         userData.put("execution", execution);
         userData.put("_eventId", eventId);
         userData.put("rmShown", rmShown);
-
+        // 用户信息
         userData.put("username", userName);
         userData.put("password", pwd);
 
         // 登录
-        Connection.Response loginResponse = post(userData, Const.LOGIN);
+        Connection.Response loginResponse = send(userData, Const.LOGIN, Connection.Method.POST);
 
 
         System.out.println("登录结束");
@@ -98,14 +97,15 @@ public class Spider {
 
 
     /**
-     * post请求
+     * 发送请求
      *
-     * @param data 请求参数
-     * @param url  请求地址
+     * @param data   请求参数
+     * @param url    请求地址
+     * @param method 请求方法
      * @return
      * @throws IOException
      */
-    private Connection.Response post(Map<String, String> data, String url) throws IOException {
+    private Connection.Response send(Map<String, String> data, String url, Connection.Method method) throws IOException {
         // System.out.println("---------before-------------");
         // Set<String> keys = cookies.keySet();
         // for (String k : keys) {
@@ -115,7 +115,7 @@ public class Spider {
 
 
         Connection.Response resp = Jsoup.connect(url)
-                .method(Connection.Method.POST)
+                .method(method)
                 .cookies(cookies)  // 设置cookies
                 .headers(Const.dHeaders)  // 设置消息头
                 .data(data)  // post信息
@@ -152,17 +152,27 @@ public class Spider {
      */
     public ZSResponse queryScore(Map<String, String> data) throws IOException {
         System.out.println("查询成绩");
-
-        Connection.Response resp = post(data, Const.QUERY_SCORE);
+        // 请求查询成绩
+        Connection.Response resp = send(data, Const.QUERY_SCORE, Connection.Method.POST);
         ZSResponse logResp;
+        // 如果未登录返回结果
         if ((logResp = isLoginIndex(resp)).getCode() == -1) {
             return logResp;
         }
+        // 如果跳转到get可能是cookies问题，再来一次
         if (resp.method() == Connection.Method.GET) {
-            resp = post(data, Const.QUERY_SCORE);
+            resp = send(data, Const.QUERY_SCORE, Connection.Method.POST);
         }
-
         System.out.println("查询成绩结束");
+        return isLoginIndex(resp);
+    }
+
+
+    /**
+     * 获取学年学期
+     */
+    public ZSResponse getSchoolYearTerms() throws IOException {
+        Connection.Response resp = send(new HashMap<String, String>(), Const.SCHOOL_YEAR_TERMS, Connection.Method.GET);
         return isLoginIndex(resp);
     }
 

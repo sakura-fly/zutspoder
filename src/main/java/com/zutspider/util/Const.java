@@ -13,14 +13,15 @@ public class Const {
     public final static String SERVICE_HALL = "http://i.zut.edu.cn/";
     // 办事大厅
     public final static String QUERY_SCORE = "http://app.zut.edu.cn/publicapp/sys/cjcxapp/modules/scoreQuery/scoreQueryAction.do";
-    // public static String
+
+    public static final String SCHOOL_YEAR_TERMS = "http://app.zut.edu.cn/publicapp/sys/cjcxapp/scoreQuery/getSchoolYearTerms.do";
 
 
     // 请求头
     public final static Map<String, String> dHeaders = new HashMap<String, String>(){
         {
-            put("Host","authserver.zut.edu.cn");
-            put("User-Agent","Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0");
+            // put("Host","authserver.zut.edu.cn");
+            put("User-Agent","Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0");
             put("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             put("Accept-Language","zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
             // put("Referer","https://authserver.zut.edu.cn/authserver/login?service=http://i.zut.edu.cn/new/index.html");
