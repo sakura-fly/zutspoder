@@ -113,6 +113,7 @@ public class Spider {
         // }
         // System.out.println("---------before-------------");
 
+        data = data == null ? new HashMap<String, String>() : data;
 
         Connection.Response resp = Jsoup.connect(url)
                 .method(method)
@@ -172,7 +173,7 @@ public class Spider {
      * 获取学年学期
      */
     public ZSResponse getSchoolYearTerms() throws IOException {
-        Connection.Response resp = send(new HashMap<String, String>(), Const.SCHOOL_YEAR_TERMS, Connection.Method.GET);
+        Connection.Response resp = send(null, Const.SCHOOL_YEAR_TERMS, Connection.Method.GET);
         return isLoginIndex(resp);
     }
 
