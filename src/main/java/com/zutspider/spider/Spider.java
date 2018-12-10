@@ -176,6 +176,56 @@ public class Spider {
         Connection.Response resp = send(null, Const.SCHOOL_YEAR_TERMS, Connection.Method.GET);
         return isLoginIndex(resp);
     }
+    /*
+
+
+     */
+
+    /**
+     * 查课表
+     * @param date 查询的日期 格式: yyyy-MM-dd
+     * @return 这天所在的周的课表
+
+
+    {
+    "amClasses": 4,
+    "weekOfTerm": "12",                                 周次
+    "schoolYearTerm": "2017-2018-1",                    学年
+    "code": 200,
+    "timeTable": [
+    {
+    "section": "1-2",                           节次
+    "position": "",
+    "date": "2017-11-27",                       日期
+    "weekday": "1",                             星期
+    "classId": "2015191403",
+    "id": "",
+    "name": "计算机组成原理",                   课程名
+    "nameEN": "",
+    "classroom": "西区1号教学楼0509[薛滨]"      教师与教室
+    }
+    ],
+    "date": "2017-11-27",
+    "pmClasses": 4,
+    "eveClasses": 2,
+    "allTeachWeeks": 19,
+    "allTermWeeks": 25
+    }
+
+     *
+     */
+    public ZSResponse queryCourses(String date) throws IOException {
+        System.out.println("查询课表");
+        Map<String, String> dateMap = new HashMap<String, String>();
+        if (date != null && !date.isEmpty()){
+            dateMap.put("date",date);
+        }
+        Connection.Response resp = send(dateMap, Const.QUERY_COURSE, Connection.Method.GET);
+        System.out.println("查询课表完成");
+        return isLoginIndex(resp);
+    }
+
+
 
 
 }

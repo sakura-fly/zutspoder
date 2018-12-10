@@ -11,6 +11,8 @@ import java.net.URLDecoder;
 public class Run {
 
 
+
+    // 测试登录
     @Test
     public void login() throws IOException {
         Spider spider = Spider.getInstance();
@@ -18,6 +20,7 @@ public class Run {
         System.out.println(r.getCode());
     }
 
+    // 测试查成绩
     @Test
     public void queryScore() throws IOException {
         Spider spider = Spider.getInstance();
@@ -61,11 +64,19 @@ public class Run {
     }
 
 
+    // 测试获取学年学期
     @Test
     public void getyear() throws IOException {
         login();
         Spider spider = Spider.getInstance();
         ZSResponse r = spider.getSchoolYearTerms();
+        System.out.println(r);
+    }
+    @Test
+    public void querykb() throws IOException {
+        login();
+        Spider spider = Spider.getInstance();
+        ZSResponse r = spider.queryCourses("2017-11-11");
         System.out.println(r);
     }
 

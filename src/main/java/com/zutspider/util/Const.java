@@ -14,7 +14,11 @@ public class Const {
     // 办事大厅
     public final static String QUERY_SCORE = "http://app.zut.edu.cn/publicapp/sys/cjcxapp/modules/scoreQuery/scoreQueryAction.do";
 
+    // 获取学年学期
     public static final String SCHOOL_YEAR_TERMS = "http://app.zut.edu.cn/publicapp/sys/cjcxapp/scoreQuery/getSchoolYearTerms.do";
+
+    // 查课表
+    public static final String QUERY_COURSE = "http://app.zut.edu.cn/publicapp/sys/mykbxt/myTimeTable/queryThisWeekCourses.do";
 
 
     // 请求头
