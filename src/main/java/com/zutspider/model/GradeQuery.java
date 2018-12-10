@@ -1,7 +1,9 @@
 package com.zutspider.model;
 
 public class GradeQuery {
+    // 查询条件
     private String name;
+    // 查询内容
     private String value;
     private String builder;
     private String linkOpt;
@@ -9,6 +11,11 @@ public class GradeQuery {
     public GradeQuery(String name, String value, String builder, String linkOpt) {
         this.name = name;
         this.value = value;
+        this.builder = builder;
+        this.linkOpt = linkOpt;
+    }
+    public GradeQuery(String name, String builder, String linkOpt) {
+        this.name = name;
         this.builder = builder;
         this.linkOpt = linkOpt;
     }
