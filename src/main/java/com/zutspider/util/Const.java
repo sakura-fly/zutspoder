@@ -23,6 +23,9 @@ public class Const {
     // 查新闻
     public static final String QUERY_NEWS = "http://i.zut.edu.cn/publicapp/sys/tzggxt/api/getUseNoticePage.do";
 
+    // 查存款信息
+    public static final String QUERY_CARD_INTO_MONEY = "http://10.10.22.25/SelfSearch/User/depositinfo.ASPX";
+
 
     // 请求头
     public final static Map<String, String> dHeaders = new HashMap<String, String>(){

@@ -106,7 +106,7 @@ public class Spider {
      * @return
      * @throws IOException
      */
-    private Connection.Response send(Map<String, String> data, String url, Connection.Method method) throws IOException {
+    public Connection.Response send(Map<String, String> data, String url, Connection.Method method) throws IOException {
         // System.out.println("---------before-------------");
         // Set<String> keys = cookies.keySet();
         // for (String k : keys) {
@@ -122,6 +122,7 @@ public class Spider {
                 .headers(Const.dHeaders)  // 设置消息头
                 .data(data)  // post信息
                 .ignoreContentType(true)
+                .timeout(5000)// 超时
                 .execute();
 
 

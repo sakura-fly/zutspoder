@@ -1,6 +1,7 @@
 import com.zutspider.model.GradeQueryUtil;
 import com.zutspider.model.Page;
 import com.zutspider.model.ZSResponse;
+import com.zutspider.spider.SchoolCardSpider;
 import com.zutspider.spider.Spider;
 import org.junit.Test;
 
@@ -73,7 +74,7 @@ public class Run {
         System.out.println(r);
     }
 
-    // 查成绩
+    // 查课表
     @Test
     public void querykb() throws IOException {
         login();
@@ -89,6 +90,14 @@ public class Run {
         Spider spider = Spider.getInstance();
         ZSResponse r = spider.querynews("","补助",new Page("",""));
         System.out.println(r);
+    }
+    // 存款
+    @Test
+    public void queryCardIntoMoney() throws IOException {
+        login();
+        SchoolCardSpider schoolCardSpider = SchoolCardSpider.getInstance();
+        schoolCardSpider.queryIntoMoney();
+        // System.out.println(r);
     }
 
 }
