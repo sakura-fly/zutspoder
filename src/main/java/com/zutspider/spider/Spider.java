@@ -1,6 +1,7 @@
 package com.zutspider.spider;
 
 
+import com.zutspider.model.Page;
 import com.zutspider.model.ZSResponse;
 import com.zutspider.util.Const;
 import org.jsoup.Connection;
@@ -148,35 +149,31 @@ public class Spider {
      * 查询成绩
      *
      * @param data 查询信息
-     * @return
-     *{
-     *     "datas": {
-     *         "scoreQueryAction": {
-     *             "totalSize": 1,      总数
-     *             "pageNumber": 1,     页码
-     *             "pageSize": 10,      每页数量
-     *             "rows": [
-     *                 {
-     *                     "PM": 4.2,                                   学分绩点
-     *                     "CJ": "71",                                  成绩
-     *                     "WID": "201500004438RB7001036 2017-101",     主键
-     *                     "XF": 2,                                     课程学分
-     *                     "KCJD": 2.1,                                 课程绩点
-     *                     "KCXZ": "考试",                              考核方式
-     *                     "XNXQDM": "2017-2018-2",                     学年学期
-     *                     "KCM": "网络安全技术",                       课程名
-     *                     "XDFS": "初修",                              修读方式
-     *                     "KCLB": "必修课/专业课",                     课程类别
-     *                     "KCH": "RB7001036 "                          课程号
-     *                 }
-     *             ]
-     *         }
-     *     },
-     *     "code": "0"
+     * @return {
+     * "datas": {
+     * "scoreQueryAction": {
+     * "totalSize": 1,      总数
+     * "pageNumber": 1,     页码
+     * "pageSize": 10,      每页数量
+     * "rows": [
+     * {
+     * "PM": 4.2,                                   学分绩点
+     * "CJ": "71",                                  成绩
+     * "WID": "201500004438RB7001036 2017-101",     主键
+     * "XF": 2,                                     课程学分
+     * "KCJD": 2.1,                                 课程绩点
+     * "KCXZ": "考试",                              考核方式
+     * "XNXQDM": "2017-2018-2",                     学年学期
+     * "KCM": "网络安全技术",                       课程名
+     * "XDFS": "初修",                              修读方式
+     * "KCLB": "必修课/专业课",                     课程类别
+     * "KCH": "RB7001036 "                          课程号
      * }
-     *
-     *
-     *
+     * ]
+     * }
+     * },
+     * "code": "0"
+     * }
      */
     public ZSResponse queryScore(Map<String, String> data) throws IOException {
         System.out.println("查询成绩");
@@ -199,35 +196,36 @@ public class Spider {
     /**
      * 获取学年学期
      * 查成绩的学习学年从这获取
+     *
      * @return 学年学期信息
      * 格式如下，显示name，穿参数用id
      * {
-     *     "datas": {
-     *         "code": {
-     *             "rows": [
-     *                 {
-     *                     "name": "2018-2019 第一学期",
-     *                     "id": "2018-2019-1"
-     *                 },
-     *                 {
-     *                     "name": "2017-2018 第二学期",
-     *                     "id": "2017-2018-2"
-     *                 },
-     *                 {
-     *                     "name": "2017-2018 第一学期",
-     *                     "id": "2017-2018-1"
-     *                 },
-     *                 {
-     *                     "name": "2016-2017 第二学期",
-     *                     "id": "2016-2017-2"
-     *                 },
-     *                 {
-     *                     "name": "2016-2017 第一学期",
-     *                     "id": "2016-2017-1"
-     *                 }
-     *             ]
-     *         }
-     *     }
+     * "datas": {
+     * "code": {
+     * "rows": [
+     * {
+     * "name": "2018-2019 第一学期",
+     * "id": "2018-2019-1"
+     * },
+     * {
+     * "name": "2017-2018 第二学期",
+     * "id": "2017-2018-2"
+     * },
+     * {
+     * "name": "2017-2018 第一学期",
+     * "id": "2017-2018-1"
+     * },
+     * {
+     * "name": "2016-2017 第二学期",
+     * "id": "2016-2017-2"
+     * },
+     * {
+     * "name": "2016-2017 第一学期",
+     * "id": "2016-2017-1"
+     * }
+     * ]
+     * }
+     * }
      * }
      */
     public ZSResponse getSchoolYearTerms() throws IOException {
@@ -279,6 +277,90 @@ public class Spider {
         }
         Connection.Response resp = send(dateMap, Const.QUERY_COURSE, Connection.Method.GET);
         System.out.println("查询课表完成");
+        return isLoginIndex(resp);
+    }
+
+
+    /**
+     * 查询新闻
+     * @param column 标签id，没有空字符串
+     * @param cti 查询条件，内容或标题,没有空字符串
+     * @param page 分页信息，空字符串第0页10条
+     * @return
+     *
+     * {
+     *     "qp": {
+     *         "aList": [
+     *             {
+     *                 "sendTimeDesc": "2018年8月31日 09:16",                                  发布时间详情
+     *                 "cover": "",
+     *                 "attchMentNumber": "",
+     *                 "noticeDesc": "",                                                       内容，太长了我给删了，
+     *                 "columnName": "校内公告",                                               标签名
+     *                 "attchList": null,
+     *                 "wid": "c2e3f4441cf0418b96b91a02bb4fe582",                              主键，查看详情的时候用
+     *                 "noticeId": null,
+     *                 "columnId": null,
+     *                 "senderId": null,
+     *                 "noticeTitle": "关于发放2018—2019学年第一学期在职人员误餐补助的通知",   标题
+     *                 "sendDepartment": "校务公开领导小组办公室",                              发布单位
+     *                 "sendPeople": null,
+     *                 "createTime": null,
+     *                 "sendTime": "2018-08-31 09:16:04",                                       发布时间
+     *                 "clickNumber": "1144",                                                   阅读数
+     *                 "noticeType": "",
+     *                 "downTime": null,
+     *                 "noticeContent": "",
+     *                 "token": "",
+     *                 "viewScope": "",
+     *                 "privilegeIsolation": "",
+     *                 "belongDept": "",
+     *                 "auditorId": "",
+     *                 "auditorName": ""
+     *             },
+     *         ],
+     *         "pageNo": 0,
+     *         "pageSize": 10,
+     *         "param": {                                               调用接口传的参数
+     *             "cti": "2018",
+     *             "pageNo": "0",
+     *             "pageSize": "10",
+     *             "column": "1509676580481440"
+     *         },
+     *         "totalItem": 5                                           总数
+     *     },
+     *     "list": [                                                    标签列表
+     *         {
+     *             "uwid": "",
+     *             "wid": "ffa616ef75df4e6d8358564bd3484f3f",
+     *             "columnId": "1509676580481440",                      标签id，按标签查询的时候穿这个
+     *             "columnName": "校内公告",                            标签名
+     *             "columnPriority": "2",
+     *             "columnDesc": "",
+     *             "viewScope": "",
+     *             "privilegeIsolation": "0"
+     *         },
+     *         ]
+     * }
+     *
+     */
+    public ZSResponse querynews(String column, String cti, Page page) throws IOException {
+        System.out.println("查询新闻");
+        // 转换分页为查询新闻格式的map
+        Map<String, String> data = page.toNewsPage();
+
+        // 查询标签
+        data.put("column",column);
+        // 查询内容
+        data.put("cti",cti);
+        System.out.println(data);
+
+        Connection.Response resp = send(data, Const.QUERY_NEWS, Connection.Method.POST);
+        // 如果跳转到get可能是cookies问题，再来一次
+        if (resp.method() == Connection.Method.GET) {
+            resp = send(data, Const.QUERY_NEWS, Connection.Method.POST);
+        }
+        System.out.println("查询新闻完成");
         return isLoginIndex(resp);
     }
 

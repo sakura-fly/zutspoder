@@ -82,4 +82,13 @@ public class Run {
         System.out.println(r);
     }
 
+    // 查新闻
+    @Test
+    public void queryNews() throws IOException {
+        login();
+        Spider spider = Spider.getInstance();
+        ZSResponse r = spider.querynews("","补助",new Page("",""));
+        System.out.println(r);
+    }
+
 }

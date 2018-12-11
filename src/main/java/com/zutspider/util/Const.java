@@ -20,6 +20,9 @@ public class Const {
     // 查课表
     public static final String QUERY_COURSE = "http://app.zut.edu.cn/publicapp/sys/mykbxt/myTimeTable/queryThisWeekCourses.do";
 
+    // 查新闻
+    public static final String QUERY_NEWS = "http://i.zut.edu.cn/publicapp/sys/tzggxt/api/getUseNoticePage.do";
+
 
     // 请求头
     public final static Map<String, String> dHeaders = new HashMap<String, String>(){

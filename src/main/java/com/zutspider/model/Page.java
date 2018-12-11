@@ -1,5 +1,8 @@
 package com.zutspider.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 页码信息
  */
@@ -34,4 +37,18 @@ public class Page {
     public void setPageSize(String pageSize) {
         this.pageSize = pageSize;
     }
+
+
+    /**
+     * 转换成新闻要用的 map
+     *
+     * @return 新闻要用的 map
+     */
+    public Map<String, String> toNewsPage() {
+        Map<String, String> pageMap = new HashMap<String, String>();
+        pageMap.put("pageNo", pageNumber);
+        pageMap.put("pageSize", pageSize);
+        return pageMap;
+    }
+
 }
