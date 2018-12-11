@@ -50,7 +50,7 @@ public class Run {
         GradeQueryUtil qu = new GradeQueryUtil();
         qu.setKcm("数")  //  查询课程名
                 .addPage2Map(new Page("1", "10")) //  设置分页信息
-                .setXn("2017-2018-1")  // 设置学年
+                .setXn(null)  // 设置学年，不设置或者设置为null，空字符串为不限制学年学期
                 .buildQuery();  //  组合查询条件
 
         ZSResponse r = spider.queryScore(qu.getQuery());
@@ -72,6 +72,8 @@ public class Run {
         ZSResponse r = spider.getSchoolYearTerms();
         System.out.println(r);
     }
+
+    // 查成绩
     @Test
     public void querykb() throws IOException {
         login();

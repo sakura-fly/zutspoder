@@ -149,7 +149,34 @@ public class Spider {
      *
      * @param data 查询信息
      * @return
-     * @throws IOException
+     *{
+     *     "datas": {
+     *         "scoreQueryAction": {
+     *             "totalSize": 1,      总数
+     *             "pageNumber": 1,     页码
+     *             "pageSize": 10,      每页数量
+     *             "rows": [
+     *                 {
+     *                     "PM": 4.2,                                   学分绩点
+     *                     "CJ": "71",                                  成绩
+     *                     "WID": "201500004438RB7001036 2017-101",     主键
+     *                     "XF": 2,                                     课程学分
+     *                     "KCJD": 2.1,                                 课程绩点
+     *                     "KCXZ": "考试",                              考核方式
+     *                     "XNXQDM": "2017-2018-2",                     学年学期
+     *                     "KCM": "网络安全技术",                       课程名
+     *                     "XDFS": "初修",                              修读方式
+     *                     "KCLB": "必修课/专业课",                     课程类别
+     *                     "KCH": "RB7001036 "                          课程号
+     *                 }
+     *             ]
+     *         }
+     *     },
+     *     "code": "0"
+     * }
+     *
+     *
+     *
      */
     public ZSResponse queryScore(Map<String, String> data) throws IOException {
         System.out.println("查询成绩");
@@ -171,6 +198,37 @@ public class Spider {
 
     /**
      * 获取学年学期
+     * 查成绩的学习学年从这获取
+     * @return 学年学期信息
+     * 格式如下，显示name，穿参数用id
+     * {
+     *     "datas": {
+     *         "code": {
+     *             "rows": [
+     *                 {
+     *                     "name": "2018-2019 第一学期",
+     *                     "id": "2018-2019-1"
+     *                 },
+     *                 {
+     *                     "name": "2017-2018 第二学期",
+     *                     "id": "2017-2018-2"
+     *                 },
+     *                 {
+     *                     "name": "2017-2018 第一学期",
+     *                     "id": "2017-2018-1"
+     *                 },
+     *                 {
+     *                     "name": "2016-2017 第二学期",
+     *                     "id": "2016-2017-2"
+     *                 },
+     *                 {
+     *                     "name": "2016-2017 第一学期",
+     *                     "id": "2016-2017-1"
+     *                 }
+     *             ]
+     *         }
+     *     }
+     * }
      */
     public ZSResponse getSchoolYearTerms() throws IOException {
         Connection.Response resp = send(null, Const.SCHOOL_YEAR_TERMS, Connection.Method.GET);
@@ -183,49 +241,46 @@ public class Spider {
 
     /**
      * 查课表
+     *
      * @param date 查询的日期 格式: yyyy-MM-dd
      * @return 这天所在的周的课表
-
-
-    {
-    "amClasses": 4,
-    "weekOfTerm": "12",                                 周次
-    "schoolYearTerm": "2017-2018-1",                    学年
-    "code": 200,
-    "timeTable": [
-    {
-    "section": "1-2",                           节次
-    "position": "",
-    "date": "2017-11-27",                       日期
-    "weekday": "1",                             星期
-    "classId": "2015191403",
-    "id": "",
-    "name": "计算机组成原理",                   课程名
-    "nameEN": "",
-    "classroom": "西区1号教学楼0509[薛滨]"      教师与教室
-    }
-    ],
-    "date": "2017-11-27",
-    "pmClasses": 4,
-    "eveClasses": 2,
-    "allTeachWeeks": 19,
-    "allTermWeeks": 25
-    }
-
-     *
+     * <p>
+     * <p>
+     * {
+     * "amClasses": 4,
+     * "weekOfTerm": "12",                                 周次
+     * "schoolYearTerm": "2017-2018-1",                    学年
+     * "code": 200,
+     * "timeTable": [                              课表列表，jsonArray，没有的时候这是空的
+     * {
+     * "section": "1-2",                           节次
+     * "position": "",
+     * "date": "2017-11-27",                       日期
+     * "weekday": "1",                             星期
+     * "classId": "2015191403",
+     * "id": "",
+     * "name": "计算机组成原理",                   课程名
+     * "nameEN": "",
+     * "classroom": "西区1号教学楼0509[薛滨]"      教师与教室
+     * }
+     * ],
+     * "date": "2017-11-27",
+     * "pmClasses": 4,
+     * "eveClasses": 2,
+     * "allTeachWeeks": 19,
+     * "allTermWeeks": 25
+     * }
      */
     public ZSResponse queryCourses(String date) throws IOException {
         System.out.println("查询课表");
         Map<String, String> dateMap = new HashMap<String, String>();
-        if (date != null && !date.isEmpty()){
-            dateMap.put("date",date);
+        if (date != null && !date.isEmpty()) {
+            dateMap.put("date", date);
         }
         Connection.Response resp = send(dateMap, Const.QUERY_COURSE, Connection.Method.GET);
         System.out.println("查询课表完成");
         return isLoginIndex(resp);
     }
-
-
 
 
 }
