@@ -1,12 +1,15 @@
 package com.zutspider.spider;
 
 
+import com.zutspider.model.Book;
 import com.zutspider.model.Page;
 import com.zutspider.model.ZSResponse;
 import com.zutspider.util.Const;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -107,15 +110,7 @@ public class Spider {
      * @throws IOException
      */
     public Connection.Response send(Map<String, String> data, String url, Connection.Method method) throws IOException {
-        // System.out.println("---------before-------------");
-        // Set<String> keys = cookies.keySet();
-        // for (String k : keys) {
-        //     System.out.println(k + "===" + cookies.get(k));
-        // }
-        // System.out.println("---------before-------------");
-
         data = data == null ? new HashMap<String, String>() : data;
-
         Connection.Response resp = Jsoup.connect(url)
                 .method(method)
                 .cookies(cookies)  // 设置cookies
@@ -124,26 +119,30 @@ public class Spider {
                 .ignoreContentType(true)
                 .timeout(5000)// 超时
                 .execute();
-
-
-        // System.out.println("++++++++++++++++++++++");
-        // System.out.println(resp.method());
-        // System.out.println(resp.statusMessage());
-        // System.out.println(resp.url());
-        // System.out.println("++++++++++++++++++++++");
-
-
         // 合并cookies
         cookies.putAll(resp.cookies());
-
-
-        // System.out.println("----------after------------");
-        // Set<String> keys2 = cookies.keySet();
-        // for (String k : keys2) {
-        //     System.out.println(k + "===" + cookies.get(k));
-        // }
-        // System.out.println("----------after------------");
         return resp;
+    }
+
+
+    /**
+     * 发送请求
+     *
+     * @param data   请求参数
+     * @param url    请求地址
+     * @param method 请求方法
+     * @return
+     * @throws IOException
+     */
+    public Connection.Response sendNoCookies(Map<String, String> data, String url, Connection.Method method) throws IOException {
+        data = data == null ? new HashMap<String, String>() : data;
+        return Jsoup.connect(url)
+                .method(method)
+                .headers(Const.dHeaders)  // 设置消息头
+                .data(data)  // post信息
+                .ignoreContentType(true)
+                .timeout(5000)// 超时
+                .execute();
     }
 
     /**
@@ -284,66 +283,64 @@ public class Spider {
 
     /**
      * 查询新闻
+     *
      * @param column 标签id，没有空字符串
-     * @param cti 查询条件，内容或标题,没有空字符串
-     * @param page 分页信息，空字符串第0页10条
-     * @return
-     *
+     * @param cti    查询条件，内容或标题,没有空字符串
+     * @param page   分页信息，空字符串第0页10条
+     * @return {
+     * "qp": {
+     * "aList": [
      * {
-     *     "qp": {
-     *         "aList": [
-     *             {
-     *                 "sendTimeDesc": "2018年8月31日 09:16",                                  发布时间详情
-     *                 "cover": "",
-     *                 "attchMentNumber": "",
-     *                 "noticeDesc": "",                                                       内容，太长了我给删了，
-     *                 "columnName": "校内公告",                                               标签名
-     *                 "attchList": null,
-     *                 "wid": "c2e3f4441cf0418b96b91a02bb4fe582",                              主键，查看详情的时候用
-     *                 "noticeId": null,
-     *                 "columnId": null,
-     *                 "senderId": null,
-     *                 "noticeTitle": "关于发放2018—2019学年第一学期在职人员误餐补助的通知",   标题
-     *                 "sendDepartment": "校务公开领导小组办公室",                              发布单位
-     *                 "sendPeople": null,
-     *                 "createTime": null,
-     *                 "sendTime": "2018-08-31 09:16:04",                                       发布时间
-     *                 "clickNumber": "1144",                                                   阅读数
-     *                 "noticeType": "",
-     *                 "downTime": null,
-     *                 "noticeContent": "",
-     *                 "token": "",
-     *                 "viewScope": "",
-     *                 "privilegeIsolation": "",
-     *                 "belongDept": "",
-     *                 "auditorId": "",
-     *                 "auditorName": ""
-     *             },
-     *         ],
-     *         "pageNo": 0,
-     *         "pageSize": 10,
-     *         "param": {                                               调用接口传的参数
-     *             "cti": "2018",
-     *             "pageNo": "0",
-     *             "pageSize": "10",
-     *             "column": "1509676580481440"
-     *         },
-     *         "totalItem": 5                                           总数
-     *     },
-     *     "list": [                                                    标签列表
-     *         {
-     *             "uwid": "",
-     *             "wid": "ffa616ef75df4e6d8358564bd3484f3f",
-     *             "columnId": "1509676580481440",                      标签id，按标签查询的时候穿这个
-     *             "columnName": "校内公告",                            标签名
-     *             "columnPriority": "2",
-     *             "columnDesc": "",
-     *             "viewScope": "",
-     *             "privilegeIsolation": "0"
-     *         },
-     *         ]
+     * "sendTimeDesc": "2018年8月31日 09:16",                                  发布时间详情
+     * "cover": "",
+     * "attchMentNumber": "",
+     * "noticeDesc": "",                                                       内容，太长了我给删了，
+     * "columnName": "校内公告",                                               标签名
+     * "attchList": null,
+     * "wid": "c2e3f4441cf0418b96b91a02bb4fe582",                              主键，查看详情的时候用
+     * "noticeId": null,
+     * "columnId": null,
+     * "senderId": null,
+     * "noticeTitle": "关于发放2018—2019学年第一学期在职人员误餐补助的通知",   标题
+     * "sendDepartment": "校务公开领导小组办公室",                              发布单位
+     * "sendPeople": null,
+     * "createTime": null,
+     * "sendTime": "2018-08-31 09:16:04",                                       发布时间
+     * "clickNumber": "1144",                                                   阅读数
+     * "noticeType": "",
+     * "downTime": null,
+     * "noticeContent": "",
+     * "token": "",
+     * "viewScope": "",
+     * "privilegeIsolation": "",
+     * "belongDept": "",
+     * "auditorId": "",
+     * "auditorName": ""
+     * },
+     * ],
+     * "pageNo": 0,
+     * "pageSize": 10,
+     * "param": {                                               调用接口传的参数
+     * "cti": "2018",
+     * "pageNo": "0",
+     * "pageSize": "10",
+     * "column": "1509676580481440"
+     * },
+     * "totalItem": 5                                           总数
+     * },
+     * "list": [                                                    标签列表
+     * {
+     * "uwid": "",
+     * "wid": "ffa616ef75df4e6d8358564bd3484f3f",
+     * "columnId": "1509676580481440",                      标签id，按标签查询的时候穿这个
+     * "columnName": "校内公告",                            标签名
+     * "columnPriority": "2",
+     * "columnDesc": "",
+     * "viewScope": "",
+     * "privilegeIsolation": "0"
+     * },
+     * ]
      * }
-     *
      */
     public ZSResponse querynews(String column, String cti, Page page) throws IOException {
         System.out.println("查询新闻");
@@ -351,9 +348,9 @@ public class Spider {
         Map<String, String> data = page.toNewsPage();
 
         // 查询标签
-        data.put("column",column);
+        data.put("column", column);
         // 查询内容
-        data.put("cti",cti);
+        data.put("cti", cti);
         System.out.println(data);
 
         Connection.Response resp = send(data, Const.QUERY_NEWS, Connection.Method.POST);
@@ -363,6 +360,55 @@ public class Spider {
         }
         System.out.println("查询新闻完成");
         return isLoginIndex(resp);
+    }
+
+
+    private boolean noLogin = true;
+
+    public ZSResponse queryBook(String q) {
+        // if (noLogin) {
+        //     initBoos();
+        //     noLogin = false;
+        // }
+        ZSResponse res = new ZSResponse();
+        Map<String, String> p = new HashMap<String, String>();
+        p.put("func", "find-b");
+        p.put("find_code", "WRD");
+        p.put("request", q);
+        p.put("local_base", "ZZU01");
+        Connection.Response r = null;
+        try {
+            r = send(p, Const.S_BOOK, Connection.Method.GET);
+            res.setCode(1);
+            res.setText(r.body());
+            parse(r.parse());
+        } catch (IOException e) {
+            res.setCode(-1);
+            e.printStackTrace();
+        }
+        // System.out.println(r.url());
+        // if (r.url().toString().contains("load-login")){
+        //     noLogin = true;
+        //     Const.S_BOOK = Const.S_BOOK_INIT;
+        // }
+        return res;
+    }
+
+    public void parse(Document d){
+        Element bookList = d.getElementsByClass("booklist").first();
+        Elements ls = bookList.select("li");
+        for (Element book : ls) {
+            Book b = new Book();
+            Element img = book.selectFirst("img");
+            b.setImg(img.attr("src").replaceAll(" ", ""));
+            Element info = book.getElementsByClass("info").first();
+            b.setAuthor(info.getElementsByClass("author").first().text());
+            b.setPublisher(info.getElementsByClass("publisher").first().text());
+            b.setDates(info.getElementsByClass("dates").first().text());
+            b.setText(book.getElementsByClass("text").first().text());
+            b.setUrl(book.selectFirst("a").attr("abs:href"));
+            System.out.println(b);
+        }
     }
 
 

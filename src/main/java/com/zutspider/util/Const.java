@@ -42,6 +42,5 @@ public class Const {
         }
     };
 
-
-
+    public static String S_BOOK = "https://www.szlib.org.cn/Search/searchshow.jsp?v_tablearray=bibliosm,serbibm,apabibibm,mmbibm,&v_index=title&v_value=java &sortfield=ptitle&sorttype=desc";
 }

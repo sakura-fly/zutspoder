@@ -100,4 +100,11 @@ public class Run {
         // System.out.println(r);
     }
 
+    @Test
+    public void sbook() {
+        Spider spider = Spider.getInstance();
+        ZSResponse r = spider.queryBook("java");
+        // System.out.println(r.getText());
+    }
+
 }
