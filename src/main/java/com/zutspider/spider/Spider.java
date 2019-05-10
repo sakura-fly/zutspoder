@@ -2,6 +2,7 @@ package com.zutspider.spider;
 
 
 import com.zutspider.model.Book;
+import com.zutspider.model.BookLib;
 import com.zutspider.model.Page;
 import com.zutspider.model.ZSResponse;
 import com.zutspider.util.Const;
@@ -12,7 +13,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -380,8 +383,8 @@ public class Spider {
         try {
             r = send(p, Const.S_BOOK, Connection.Method.GET);
             res.setCode(1);
-            res.setText(r.body());
-            parse(r.parse());
+            res.setData(parse(r.parse()));
+
         } catch (IOException e) {
             res.setCode(-1);
             e.printStackTrace();
@@ -394,9 +397,10 @@ public class Spider {
         return res;
     }
 
-    public void parse(Document d){
+    public List<Book> parse(Document d) {
         Element bookList = d.getElementsByClass("booklist").first();
         Elements ls = bookList.select("li");
+        List<Book> books = new ArrayList<Book>();
         for (Element book : ls) {
             Book b = new Book();
             Element img = book.selectFirst("img");
@@ -407,8 +411,38 @@ public class Spider {
             b.setDates(info.getElementsByClass("dates").first().text());
             b.setText(book.getElementsByClass("text").first().text());
             b.setUrl(book.selectFirst("a").attr("abs:href"));
-            System.out.println(b);
+            books.add(b);
         }
+        return books;
+    }
+
+    public List<BookLib> bookDetial(Book b) throws IOException {
+        Connection.Response r = send(null, b.getUrl(), Connection.Method.GET);
+        Document d = r.parse();
+        Elements binfo = d.getElementsByClass("righttop").first().select("li");
+        b.setPrice(binfo.get(1).text());
+        b.setIndex(binfo.get(3).text());
+        b.setISBN(binfo.get(4).text());
+        b.setType(binfo.get(5).text());
+
+        List<BookLib> bd = new ArrayList<BookLib>();
+        Elements detialTable = d.getElementsByClass("tab_4_text").first().select("tr");
+        for (Element dInfos : detialTable) {
+            BookLib bookLib = new BookLib();
+            Elements info = dInfos.select("td");
+            if (info == null || info.isEmpty()) {
+                continue;
+            }
+            bookLib.setbCode(info.get(0).text());
+            bookLib.setIndex(info.get(1).text());
+            bookLib.setAddr(info.get(2).text());
+            bookLib.setStat(info.get(3).text());
+            bookLib.setJuanqi(info.get(4).text());
+            bookLib.setType(info.get(5).text());
+            bd.add(bookLib);
+        }
+        return bd;
+
     }
 
 

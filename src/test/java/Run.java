@@ -1,6 +1,4 @@
-import com.zutspider.model.GradeQueryUtil;
-import com.zutspider.model.Page;
-import com.zutspider.model.ZSResponse;
+import com.zutspider.model.*;
 import com.zutspider.spider.SchoolCardSpider;
 import com.zutspider.spider.Spider;
 import org.junit.Test;
@@ -8,6 +6,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.List;
 
 public class Run {
 
@@ -105,6 +104,14 @@ public class Run {
         Spider spider = Spider.getInstance();
         ZSResponse r = spider.queryBook("java");
         // System.out.println(r.getText());
+    }
+
+    @Test
+    public void detail() throws IOException {
+        Spider spider = Spider.getInstance();
+        ZSResponse r = spider.queryBook("java");
+        List<BookLib> rr = spider.bookDetial((Book) r.getData().get(0));
+        System.out.println(rr);
     }
 
 }

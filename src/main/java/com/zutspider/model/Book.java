@@ -8,6 +8,10 @@ public class Book {
     private String dates;
     private String text;
     private String url;
+    private String index;
+    private String type;
+    private String ISBN;
+    private String price;
 
     public String getImg() {
         return img;
@@ -57,6 +61,38 @@ public class Book {
         this.url = url;
     }
 
+    public String getIndex() {
+        return index;
+    }
+
+    public void setIndex(String index) {
+        this.index = index;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getISBN() {
+        return ISBN;
+    }
+
+    public void setISBN(String ISBN) {
+        this.ISBN = ISBN;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -66,7 +102,10 @@ public class Book {
                 ", dates='" + dates + '\'' +
                 ", text='" + text + '\'' +
                 ", url='" + url + '\'' +
+                ", index='" + index + '\'' +
+                ", type='" + type + '\'' +
+                ", ISBN='" + ISBN + '\'' +
+                ", price='" + price + '\'' +
                 '}';
     }
-
 }

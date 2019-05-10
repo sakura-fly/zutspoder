@@ -1,6 +1,8 @@
 package com.zutspider.model;
 
 
+import java.util.List;
+
 /**
  * 请求结果
  */
@@ -20,6 +22,9 @@ public class ZSResponse {
     // 结果内容
     private String text;
 
+    private List data;
+
+
     public int getCode() {
         return code;
     }
@@ -34,6 +39,14 @@ public class ZSResponse {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public List getData() {
+        return data;
+    }
+
+    public void setData(List data) {
+        this.data = data;
     }
 
     @Override
